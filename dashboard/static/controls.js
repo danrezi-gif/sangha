@@ -33,7 +33,7 @@ function loadConfigFromForm() {
     total_agents: parseInt(document.getElementById('total-agents').value) || 10,
     cycles_per_run: parseInt(document.getElementById('cycles-per-run').value) || 50,
     pairs_per_cycle: parseInt(document.getElementById('pairs-per-cycle').value) || 5,
-    cycle_delay_seconds: parseFloat(document.getElementById('cycle-delay').value) || 1.0,
+    cycle_delay_seconds: parseFloat(document.getElementById('cycle-delay').value) ?? 1.0,
     window: parseInt(document.getElementById('memory-window').value) || 5,
     detection_interval: parseInt(document.getElementById('detection-interval').value) || 25,
     min_novel_phrase_appearances: parseInt(document.getElementById('min-novel-phrase').value) || 3,
@@ -169,7 +169,17 @@ function parseSimpleYAML(text) {
     const match = line.match(/^\s*(\w+):\s*(.+)$/);
     if (match) {
       const [, key, value] = match;
-      config[key] = isNaN(value) ? value : parseFloat(value);
+      const trimmed = value.trim();
+      // Handle booleans
+      if (trimmed === 'true') {
+        config[key] = true;
+      } else if (trimmed === 'false') {
+        config[key] = false;
+      } else if (!isNaN(trimmed) && trimmed !== '') {
+        config[key] = parseFloat(trimmed);
+      } else {
+        config[key] = trimmed.replace(/^["']|["']$/g, ''); // Remove quotes
+      }
     }
   }
   return config;
@@ -212,8 +222,11 @@ function updateStats(data) {
     stats.cycle = data.cycle;
   }
   
+  // Access nodes from global scope (defined in swarm.js)
+  const nodeCount = (typeof nodes !== 'undefined' && nodes) ? nodes.length : 0;
+  
   // Update stat cards
-  document.getElementById('stat-agents').textContent = nodes.length || 0;
+  document.getElementById('stat-agents').textContent = nodeCount || 0;
   document.getElementById('stat-cycle').textContent = stats.cycle;
   document.getElementById('stat-interactions').textContent = stats.interactions;
   document.getElementById('stat-traditions').textContent = stats.traditions.size;
@@ -227,19 +240,27 @@ function updateInteractionStats() {
   const el = document.getElementById('interaction-stats');
   if (!el) return;
   
-  const avgPerAgent = nodes.length > 0 ? (stats.interactions / nodes.length).toFixed(1) : '0';
+  // Access nodes from global scope (defined in swarm.js)
+  const nodeCount = (typeof nodes !== 'undefined' && nodes) ? nodes.length : 0;
+  const avgPerAgent = nodeCount > 0 ? (stats.interactions / nodeCount).toFixed(1) : '0';
   
   el.innerHTML = `
     <p><strong>Total Interactions:</strong> ${stats.interactions}</p>
     <p><strong>Current Cycle:</strong> ${stats.cycle}</p>
     <p><strong>Avg per Agent:</strong> ${avgPerAgent}</p>
-    <p><strong>Active Agents:</strong> ${nodes.length}</p>
+    <p><strong>Active Agents:</strong> ${nodeCount}</p>
   `;
 }
 
 function updateTraditionChart() {
   const el = document.getElementById('tradition-chart');
   if (!el) return;
+  
+  // Access nodes and traditionColor from global scope (defined in swarm.js)
+  if (typeof nodes === 'undefined' || !nodes || nodes.length === 0) {
+    el.innerHTML = '<p style="color: #666;">No agents active yet</p>';
+    return;
+  }
   
   // Count agents per tradition
   const tradCounts = {};
@@ -255,7 +276,8 @@ function updateTraditionChart() {
     const bar = document.createElement('div');
     bar.className = 'tradition-bar';
     const width = (count / maxCount * 100);
-    const color = traditionColor(trad);
+    // Use traditionColor if available, otherwise use a default color
+    const color = (typeof traditionColor !== 'undefined') ? traditionColor(trad) : '#6366f1';
     
     bar.innerHTML = `
       <div class="tradition-name" title="${trad}">${trad}</div>
