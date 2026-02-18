@@ -9,25 +9,169 @@
 <body>
   <header>
     <h1>SANGHA</h1>
-    <span id="status">connecting…</span>
-    <span id="cost">$0.0000</span>
+    <p class="subtitle">Swarm Intelligence Artwork — Contemplative Agents in Dialogue</p>
+    <div class="header-controls">
+      <span id="status">connecting…</span>
+      <span id="cost">$0.0000</span>
+      <button id="toggle-controls" class="btn-secondary">⚙️ Controls</button>
+    </div>
   </header>
+
+  <aside id="control-panel" class="hidden">
+    <div class="panel-header">
+      <h2>Control Panel</h2>
+      <button id="close-controls" class="btn-icon">✕</button>
+    </div>
+
+    <div class="panel-section">
+      <h3>Project Overview</h3>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Agents</div>
+          <div class="stat-value" id="stat-agents">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Current Cycle</div>
+          <div class="stat-value" id="stat-cycle">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Interactions</div>
+          <div class="stat-value" id="stat-interactions">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Traditions</div>
+          <div class="stat-value" id="stat-traditions">0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <h3>Swarm Parameters</h3>
+      <form id="swarm-config">
+        <div class="form-group">
+          <label for="total-agents">Number of Agents</label>
+          <input type="number" id="total-agents" min="2" max="100" value="10" />
+          <span class="help-text">Scale from 2 to 100 agents</span>
+        </div>
+        
+        <div class="form-group">
+          <label for="cycles-per-run">Cycles per Run</label>
+          <input type="number" id="cycles-per-run" min="1" max="1000" value="50" />
+          <span class="help-text">Number of interaction cycles</span>
+        </div>
+        
+        <div class="form-group">
+          <label for="pairs-per-cycle">Pairs per Cycle</label>
+          <input type="number" id="pairs-per-cycle" min="1" max="50" value="5" />
+          <span class="help-text">Simultaneous conversations</span>
+        </div>
+        
+        <div class="form-group">
+          <label for="cycle-delay">Cycle Delay (seconds)</label>
+          <input type="number" id="cycle-delay" min="0" max="10" step="0.1" value="1.0" />
+          <span class="help-text">Pause between cycles</span>
+        </div>
+
+        <div class="form-group">
+          <label for="memory-window">Memory Window</label>
+          <input type="number" id="memory-window" min="1" max="20" value="5" />
+          <span class="help-text">Past interactions remembered</span>
+        </div>
+      </form>
+    </div>
+
+    <div class="panel-section">
+      <h3>API Configuration</h3>
+      <div class="api-status">
+        <div class="api-item">
+          <span class="api-name">🟢 Groq</span>
+          <span class="api-info">Worker & Thinker tiers</span>
+        </div>
+        <div class="api-item">
+          <span class="api-name">🟢 Anthropic</span>
+          <span class="api-info">Oracle tier (Claude)</span>
+        </div>
+        <div class="cost-estimate">
+          <strong>Est. Monthly Cost:</strong> <span id="est-cost">$8.34</span>
+          <div class="help-text">Based on 100 agents, 10 cycles/day</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <h3>Deployment Controls</h3>
+      <div class="deployment-actions">
+        <button id="save-config" class="btn-primary">💾 Save Configuration</button>
+        <button id="load-config" class="btn-secondary">📂 Load from File</button>
+        <button id="export-config" class="btn-secondary">📤 Export Settings</button>
+        <button id="reset-config" class="btn-warning">↺ Reset to Defaults</button>
+      </div>
+      
+      <div class="deployment-info">
+        <p class="info-text">
+          <strong>Note:</strong> Changes require restarting the experiment. 
+          Stop the current run and execute:
+        </p>
+        <code class="command-box">python scripts/run_experiment.py</code>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <h3>Emergence Detection</h3>
+      <div class="form-group">
+        <label for="detection-interval">Detection Interval (cycles)</label>
+        <input type="number" id="detection-interval" min="5" max="100" value="25" />
+      </div>
+      <div class="form-group">
+        <label for="min-novel-phrase">Min Novel Phrase Appearances</label>
+        <input type="number" id="min-novel-phrase" min="1" max="10" value="3" />
+      </div>
+    </div>
+  </aside>
 
   <main>
     <section id="graph-container">
+      <div class="graph-header">
+        <h2>Swarm Visualization</h2>
+        <div class="graph-controls">
+          <button id="recenter-graph" class="btn-icon" title="Recenter">⊙</button>
+          <button id="toggle-labels" class="btn-icon" title="Toggle Labels">🏷️</button>
+        </div>
+      </div>
       <svg id="graph"></svg>
     </section>
 
     <section id="sidebar">
-      <h2>Live Feed</h2>
-      <div id="feed"></div>
+      <div class="sidebar-tabs">
+        <button class="tab-btn active" data-tab="feed">Live Feed</button>
+        <button class="tab-btn" data-tab="emergence">Emergence</button>
+        <button class="tab-btn" data-tab="stats">Statistics</button>
+      </div>
 
-      <h2>Emergence Events</h2>
-      <div id="emergence"></div>
+      <div id="tab-feed" class="tab-content active">
+        <div id="feed"></div>
+      </div>
+
+      <div id="tab-emergence" class="tab-content">
+        <div id="emergence"></div>
+      </div>
+
+      <div id="tab-stats" class="tab-content">
+        <div class="stats-detail">
+          <h3>Interaction Statistics</h3>
+          <div id="interaction-stats">
+            <p>Waiting for data...</p>
+          </div>
+          
+          <h3>Tradition Distribution</h3>
+          <div id="tradition-chart"></div>
+        </div>
+      </div>
     </section>
   </main>
 
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="/static/swarm.js"></script>
+  <script src="/static/controls.js"></script>
 </body>
 </html>
