@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sangha — Swarm Intelligence</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header>
+    <h1>SANGHA</h1>
+    <span id="status">connecting…</span>
+    <span id="cost">$0.0000</span>
+  </header>
+
+  <main>
+    <section id="graph-container">
+      <svg id="graph"></svg>
+    </section>
+
+    <section id="sidebar">
+      <h2>Live Feed</h2>
+      <div id="feed"></div>
+
+      <h2>Emergence Events</h2>
+      <div id="emergence"></div>
+    </section>
+  </main>
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="/static/swarm.js"></script>
+</body>
+</html>

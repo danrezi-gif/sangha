@@ -1,0 +1,22 @@
+tiers:
+  1:
+    model: "groq/llama-3.1-8b-instant"
+    max_tokens: 150
+    temperature: 0.9
+    cost_per_1k_input: 0.00005
+    cost_per_1k_output: 0.00008
+    label: "Worker"
+  2:
+    model: "groq/llama-3.3-70b-versatile"
+    max_tokens: 200
+    temperature: 0.85
+    cost_per_1k_input: 0.00059
+    cost_per_1k_output: 0.00079
+    label: "Thinker"
+  3:
+    model: "anthropic/claude-sonnet-4-20250514"
+    max_tokens: 250
+    temperature: 0.80
+    cost_per_1k_input: 0.003
+    cost_per_1k_output: 0.015
+    label: "Oracle"

@@ -1,0 +1,33 @@
+# Global Sangha settings
+
+swarm:
+  total_agents: 10           # Start small; scale to 100
+  cycles_per_run: 50         # Number of interaction cycles per run
+  pairs_per_cycle: 5         # How many pairs interact per cycle
+  cycle_delay_seconds: 1.0   # Pause between cycles (cosmetic for dashboards)
+
+memory:
+  window: 5                  # Number of past interactions each agent remembers
+  swarm_pulse_frequency: 20  # Every N cycles, update the collective pulse summary
+
+pairing:
+  affinity_weighted: 0.40
+  tradition_crossing: 0.30
+  random: 0.20
+  anti_affinity: 0.10
+  affinity_decay: 0.97       # How fast affinities fade toward 0.5 each cycle
+
+emergence:
+  detection_interval: 25     # Run emergence detection every N cycles
+  min_novel_phrase_appearances: 3  # Threshold for "resonance chain" detection
+
+logging:
+  level: INFO
+  show_interactions: true    # Print each exchange to the terminal
+  emergence_journal: data/emergence_journal.jsonl
+  database: data/sangha.db
+
+dashboard:
+  enabled: false             # Set true to start FastAPI WebSocket server
+  host: "127.0.0.1"
+  port: 8765
