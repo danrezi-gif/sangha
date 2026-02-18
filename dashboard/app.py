@@ -7,8 +7,9 @@ import json
 from pathlib import Path
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 
 app = FastAPI(title="Sangha Dashboard")
 
@@ -18,9 +19,45 @@ app.mount("/static", StaticFiles(directory=str(_STATIC)), name="static")
 _connections: list[WebSocket] = []
 
 
+class ConfigRequest(BaseModel):
+    yaml: str
+    config: dict
+
+
 @app.get("/")
 async def index():
     return FileResponse(_STATIC / "index.html")
+
+
+@app.post("/api/save-config")
+async def save_config(req: ConfigRequest):
+    """Save configuration to settings.yaml"""
+    try:
+        config_path = Path("config/settings.yaml")
+        config_path.parent.mkdir(parents=True, exist_ok=True)
+        config_path.write_text(req.yaml)
+        return JSONResponse({"status": "success", "message": "Configuration saved"})
+    except Exception as e:
+        return JSONResponse(
+            {"status": "error", "message": str(e)}, status_code=500
+        )
+
+
+@app.get("/api/config")
+async def get_config():
+    """Get current configuration"""
+    try:
+        config_path = Path("config/settings.yaml")
+        if config_path.exists():
+            content = config_path.read_text()
+            return JSONResponse({"status": "success", "yaml": content})
+        return JSONResponse(
+            {"status": "error", "message": "Config file not found"}, status_code=404
+        )
+    except Exception as e:
+        return JSONResponse(
+            {"status": "error", "message": str(e)}, status_code=500
+        )
 
 
 @app.websocket("/ws")

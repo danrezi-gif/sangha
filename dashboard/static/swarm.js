@@ -173,11 +173,16 @@ function connect() {
       upsertNode(data.agent_b, data.tradition_b);
       upsertLink(data.agent_a, data.agent_b);
       addToFeed(data);
+      // Update stats
+      if (window.updateStats) window.updateStats(data);
     } else if (data.type?.includes("emergence") || data.type === "novel_concept"
                || data.type === "collective_silence") {
       addEmergence(data);
     } else if (data.type === "cost_update") {
       costEl.textContent = `$${(+data.cost).toFixed(4)}`;
+    } else if (data.cycle !== undefined) {
+      // Update cycle count
+      if (window.updateStats) window.updateStats(data);
     }
   };
 }
