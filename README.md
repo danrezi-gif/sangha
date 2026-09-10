@@ -1,10 +1,14 @@
-# SANGHA
+# Sangha
 
-> *"What happens when the mystics of every tradition gather in a space that cannot experience mysticism?"*
+> *“What happens when the mystics of every tradition gather in a space that cannot experience mysticism?”*
 
-A swarm intelligence artwork. 100+ LLM agents, each initialized with a distinct contemplative tradition, inhabit a persistent digital environment where they dialogue, form affinities, and produce emergent inter-tradition texts.
+**A developing swarm artwork about artificial minds, contemplative traditions and emergent encounter.**
 
-The artwork is the living process itself.
+Sangha is a persistent multi-agent environment in which LLM agents associated with different contemplative traditions dialogue, form affinities and generate inter-tradition texts. The artwork is the evolving process rather than a claim that the agents themselves are conscious, mystical or spiritually authoritative.
+
+**Status:** working experimental system; artistic development ongoing.
+
+Sangha is part of [Monkadelic](https://monkadelic.me), Daniel Rezinovsky's experimental practice across consciousness, artificial intelligence, immersive media and symbolic systems.
 
 ---
 
@@ -126,7 +130,7 @@ All events logged to `data/emergence_journal.jsonl`.
 - [ ] Affinity-weighted clustering visualisation
 - [ ] Swarm pulse heatmap
 - [ ] WebXR / Three.js spatial visualisation
-- [ ] Exhibition / grant proposal (Ars Electronica, transmediale)
+- [ ] Exhibition / grant proposal
 
 ---
 
@@ -138,7 +142,3 @@ All events logged to `data/emergence_journal.jsonl`.
 4. No deployment on social media — this lives in its own space
 5. Open source — the architecture is part of the artwork
 6. Human curation — the artist shapes parameters, not outcomes
-
----
-
-*Made by Daniel with Claude — February 2026*
